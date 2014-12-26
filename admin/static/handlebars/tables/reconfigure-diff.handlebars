@@ -1,10 +1,10 @@
 <ul class="assignments_list">
-  <li class="tree-line"></li>
   {{#if errors}}
   <li class="invalid">
     Server changes not shown: Invalid configuration.
   </li>
   {{else}}
+  <li class="tree-line"></li>
   {{#each shards}}
   <li class="datacenter parent {{change}}">
     <div class="datacenter-info parent-info">

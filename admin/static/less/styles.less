@@ -2379,7 +2379,7 @@ TODO: retire this
     .section h2.title {
         border-bottom: thin solid #f0f0f0;
         padding-bottom: 15px;
-        margin-bottom: 0;
+        margin-bottom: 2px;
     }
     .section.statistics {
         > h2.title {
@@ -3459,6 +3459,14 @@ TODO: retire this
         .flex();
         .flex-direction(column);
         .flex-align-items(stretch);
+        .info{
+            text-align: left;
+            margin: 7px 0px 0px 0px;
+            padding: 7px 19px 7px 15px;
+            border-left: 4px solid #9FCADF;
+            background: #ecf2f7;
+            font-family: @sans;
+        }
         .reconfigure-form {
             .flex();
             .flex-align-items(flex-start);
@@ -3487,16 +3495,17 @@ TODO: retire this
         &:hover {
             text-decoration: none;
         }
+        margin-top: 12px;
         padding-bottom: 5px;
         display: block;
         text-align: left;
         &::before {
-            content: "\25B6";
-            padding: 0px 10px;
+            content: url('images/arrow_right.png');
+            padding: 0 10px 0 0;
         }
         &.expanded::before {
-            content: "\25BC";
-            padding: 0px 10px;
+            content: url('images/arrow_down.png');
+            padding: 0 10px 0 0;
         }
     }
     .reconfigure-diff {
@@ -3518,8 +3527,11 @@ TODO: retire this
         }
         li.invalid {
             width: 100%;
-            background-color: #ddd;
+            border-radius: 3px;
+            margin-top: 5px;
+            background-color: #f5f5f5;
             padding: 10px;
+            background-image: none;
         }
 
         .tree-line {

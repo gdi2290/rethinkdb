@@ -24,6 +24,9 @@ module 'TableView', ->
 
         fetch_data: =>
             this_id = @id
+            # This query should succeed as long as the cluster is
+            # available. This does not include things like table/shard
+            # counts, or secondary index status etc.
             guaranteed_query =
                 r.do(
                     r.db(system_db).table('server_config').coerceTo('array'),
@@ -52,6 +55,9 @@ module 'TableView', ->
                             ).without('shards')
                         )
                     )
+            # This query can fail if the primary replica is
+            # unavailable, which happens immediately after a
+            # reconfigure.
             failable_query = r.do(
                 r.db(system_db).table('table_status').get(this_id),
                 r.db(system_db).table('table_config').get(this_id),
@@ -95,6 +101,8 @@ module 'TableView', ->
                         ).coerceTo('array')
                     })
             )
+            # This timer keeps track of the failable query, so we can
+            # cancel it when we navigate away from the table page.
             @failable_timer = driver.run failable_query, 1000, (error, result) =>
                 if error?
                     console.log error.msg
@@ -162,7 +170,9 @@ module 'TableView', ->
                     @render()
 
 
-
+            # This timer keeps track of the guaranteed query, running
+            # it every 5 seconds. We cancel it when navigating away
+            # from the table page.
             @guaranteed_timer = driver.run guaranteed_query, 5000, (error, result) =>
                 if error?
                     # TODO: We may want to render only if we failed to open a connection
