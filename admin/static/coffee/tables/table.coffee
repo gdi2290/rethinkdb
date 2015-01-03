@@ -25,8 +25,12 @@ module 'TableView', ->
         fetch_data: =>
             this_id = @id
             # This query should succeed as long as the cluster is
-            # available. This does not include things like table/shard
-            # counts, or secondary index status etc.
+            # available, since we get it from the system tables.  Info
+            # we don't get from the system tables includes things like
+            # table/shard counts, or secondary index status. Those are
+            # obtained from table.info() and table.indexStatus() below
+            # in `failable_query` so if they fail we still get the
+            # data available in the system tables.
             guaranteed_query =
                 r.do(
                     r.db(system_db).table('server_config').coerceTo('array'),
@@ -42,9 +46,7 @@ module 'TableView', ->
                                 num_servers: server_config.count()
                                 num_default_servers: server_config.filter((server) ->
                                     server('tags').contains('default')).count()
-                                num_available_shards: table("shards").filter((shard) ->
-                                    shard('replicas')(shard('replicas')('server').indexesOf(shard('primary_replica'))(0))('state').eq('ready')
-                                    ).count()
+                                num_available_shards: table("shards").count((row) -> row('primary_replica').ne(null))
                                 num_replicas: table("shards").concatMap( (shard) -> shard('replicas')).count()
                                 num_available_replicas: table("shards").concatMap((shard) ->
                                     shard('replicas').filter({state: "ready"})).count()
@@ -55,9 +57,11 @@ module 'TableView', ->
                             ).without('shards')
                         )
                     )
-            # This query can fail if the primary replica is
-            # unavailable, which happens immediately after a
-            # reconfigure.
+            # This query can throw an exception and failif the primary
+            # replica is unavailable (which happens immediately after
+            # a reconfigure). Since this query makes use of
+            # table.info() and table.indexStatus(), it's separated
+            # from the guaranteed query above.
             failable_query = r.do(
                 r.db(system_db).table('table_status').get(this_id),
                 r.db(system_db).table('table_config').get(this_id),

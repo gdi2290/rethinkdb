@@ -28,12 +28,16 @@
 @sans: 'Open Sans', sans-serif;
 @serif: 'Copse', serif;
 @monospace: monospace;
+@ionicons: 'Ionicons';
 
 // Visualizations (graphs, etc.)
 @import "vis.less";
 
 //Flexbox ms prefixes
 @import "flexbox-mixins.less";
+
+// Ionicon mixins
+@import "ionicons.less";
 
 /*
     ----------------------------------------------------------------------
@@ -61,6 +65,53 @@ html, body {
         font-family: @monospace;
     }
 }
+.new-box(@icon, @border, @background, @icon-color) {
+    @icon-size: 18px;
+    border: 1px solid @border;
+    text-align: left;
+    background-color: @background;
+    font-family: @sans;
+    border-radius: 3px;
+    color: lighten(black, 30%);
+    position: relative;
+    padding: 0px;
+    
+    p {
+        margin: 10px 10px 10px @icon-size + 15 !important;
+    }
+    
+    &::before {
+        content: @icon;
+        font-family: @ionicons;
+        font-size: @icon-size;
+        color: @icon-color;
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        height: 100%;
+    }
+}
+.new-infobox {
+    //@border-color: rgb(201, 217, 225);
+    @border-color: #C9D9E1;
+    @icon-color: darken(saturate(#9FCADF, 10%), 10%);
+    @background-color: lighten(@icon-color, 30%);
+    .new-box(@ionicon-var-information-circled,
+             @border-color,
+             @background-color,
+             @icon-color);
+}
+
+.new-errorbox {
+    @icon-color: darken(saturate(#F1D5D5, 10%), 20%);
+    @border-color: #D8C8C8;
+    @background-color: #F2E4E4;
+    .new-box(@ionicon-var-alert-circled,
+             @border-color,
+             @background-color,
+             @icon-color);
+}
+
 #main_view{
     height: 100%;
 }
@@ -2437,7 +2488,7 @@ TODO: retire this
             position: relative;
             list-style-type: none;
             p {
-                color: #a7a7a7;
+                color: #5c;
                 position: absolute;
                 text-overflow: ellipsis;
                 overflow: hidden;
@@ -2528,7 +2579,7 @@ TODO: retire this
                 height: @element_height;
                 position: relative;
                 p {
-                    color: #a7a7a7;
+                    color: #5c6169;
                     position: absolute;
                     text-overflow: ellipsis;
                     overflow: hidden;
@@ -3406,28 +3457,76 @@ TODO: retire this
 
 }
 
+// override bootstrap
+#modal-dialog {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    display: none;
+    z-index: 1050;
+    &.visible {
+        .flex();
+    }
+    .flex-justify(center);
+    .flex-align-items(center);
+    .modal {
+        position: static;
+        margin: 0px;
+        top: auto;
+        left: auto;
+        
+    }
+}
+
 .reconfigure-modal {
     @ease-in-circ: cubic-bezier(0.6, 0.04, 0.98, 0.335);
     @header-height: 53px;
     @intro-height: 183px;
     @footer-height: 30px;
-    @expand-link-height: 18px;
-    @min-diff-height: 100px;
-    @expanded-min-height: @header-height
-                              + @intro-height
-                              + @expand-link-height
-                              + @footer-height
-                              + @min-diff-height;
-    @collapsed-min-height: @expanded-min-height - @min-diff-height;
-    top: 50%;
-    margin-top: calc(-@collapsed-min-height ~"/" 2);
-    @transition-speed: 0.25s;
-    transition: margin-top @transition-speed @ease-in-circ, top @transition-speed @ease-in-circ;
-    &.expanded {
-        margin-top: 0px;
-        max-height: 100%;
-        top: 50px;
-        transition: margin-top @transition-speed @ease-in-circ, top @transition-speed @ease-in-circ;
+    @expand-link-height: 23px;
+    @diff-height: 300px;
+    @expanded-height: 582px;
+    @transition-speed: 0.2s;
+    .modal-body .expandbox {
+        .flex();
+        .flex-direction(column);
+        .flex-justify(flex-begin);
+        min-height: 0px;
+        max-height: @diff-height;
+        transition: min-height @transition-speed @ease-in-circ;
+        &.expanded {
+            @media (min-height: @expanded-height) {
+                min-height: @diff-height + @expand-link-height;
+            }
+            @media (max-height: @expanded-height) {
+                min-height: @diff-height / 2 + @expand-link-height;
+            }
+        }
+    }
+    .reconfigure-diff {
+        @border-color: #d8d8d8;
+        @background-color: #fbfbfb;
+        padding: 0px 6px;
+        background: top right no-repeat url('images/thinker_watermark.png');
+        border: 1px solid #fff;
+        border-radius: 3px;
+        background-color: @background-color;
+        height: 0px;
+        transition:
+        border-color @transition-speed,
+        height @transition-speed @ease-in-circ;
+        &.expanded {
+            padding: 6px 6px;
+            border-color: @border-color;
+            @media (min-height: @expanded-height) {
+                height: @diff-height;
+            }
+            @media (max-height: @expanded-height) {
+                height: @diff-height / 2;
+            }
+        }
     }
     .flex();
     .flex-direction(column);
@@ -3436,16 +3535,22 @@ TODO: retire this
         display: none;
     }
     .alert.error {
-        padding: 0 10px 0 10px;
+        .new-errorbox;
         display: none;
+        &.shown {
+            display: flex;
+        }
         p {
-            // Errors are hidden and displayed individually
             display: none;
+            &.shown {
+                display: block;
+            }
         }
     }
     .modal-body {
         max-height: 100%;
         overflow-y: hidden;
+        padding-bottom: 0px;
     }
     .modal-footer {
         display: block;
@@ -3459,13 +3564,9 @@ TODO: retire this
         .flex();
         .flex-direction(column);
         .flex-align-items(stretch);
-        .info{
-            text-align: left;
-            margin: 7px 0px 0px 0px;
-            padding: 7px 19px 7px 15px;
-            border-left: 4px solid #9FCADF;
-            background: #ecf2f7;
-            font-family: @sans;
+        .infobox {
+            .new-infobox;
+            margin-top: 10px;
         }
         .reconfigure-form {
             .flex();
@@ -3495,7 +3596,6 @@ TODO: retire this
         &:hover {
             text-decoration: none;
         }
-        margin-top: 12px;
         padding-bottom: 5px;
         display: block;
         text-align: left;
@@ -3510,14 +3610,8 @@ TODO: retire this
     }
     .reconfigure-diff {
         overflow-y: auto;
-        @li-height: 30px;
-        max-height: 0px;
-        transition: max-height @transition-speed @ease-in-circ;
-        &.expanded {
-            display: block;
-            max-height: calc(100vh ~"-" @collapsed-min-height ~"-" 100px);
-            transition: max-height @transition-speed @ease-in-circ;
-        }
+        margin-bottom: 10px;
+        @li-height: 25px;
         p {
             font-size: 12px !important;
             line-height: @li-height !important;
@@ -3529,7 +3623,6 @@ TODO: retire this
             width: 100%;
             border-radius: 3px;
             margin-top: 5px;
-            background-color: #f5f5f5;
             padding: 10px;
             background-image: none;
         }

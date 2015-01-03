@@ -1,7 +1,8 @@
 <div class="intro">
-  <div class="info">
-    Applying changes may cause the table to become unavailable
-    temporarily.
+  <div class="infobox">
+    <p>
+      Applying changes may cause the table to be unavailable for a short time.
+    </p>
   </div>
   <form class="reconfigure-form">
     <div>
@@ -22,44 +23,46 @@
     </div>
   </form>
 </div>
-<div class="alert alert-error error">
-  <p class="error zero-shards">
-    Each table must have at least one shard.
-  </p>
-  <p class="error no-shards">
-    The number of shards is not set.
-  </p>
-  <p class="error zero-replicas">
-    Each table must have at least one replica per shard.
-  </p>
-  <p class="error no-replicas">
-    The number of replicas per shard is not set.
-  </p>
-  <p class="error too-many-shards">
-    A table may not have more shards than there are servers. Currently
-    you have {{num_default_servers}} servers available for this table.
-  </p>
-  <p class="error not-enough-defaults-shard">
-    While you have enough servers for this many shards, not enough of
-    them have the "default" tag.  You can manage server tags through
-    the table "rethinkdb.server_config".
-  </p>
-  <p class="error not-enough-defaults-replica">
-    While you have enough servers for this many replicas, not enough
-    of them have the "default" tag. You can manage server tags through
-    the table "rethinkdb.server_config".
-  </p>
-  <p class="error too-many-replicas">
-    A table may not have more replicas per shard than there are
-    servers. Currently you have {{num_default_servers}} servers
-    available for this table.
-  </p>
-  <p class="error server-error">
-    The server returned the following error:
-    <div class="server-msg">
-    {{server_error}}
-    </div>
-  </p>
+<div class="expandbox">
+  <div class="alert error alert-error">
+    <p class="error zero-shards">
+      Each table must have at least one shard.
+    </p>
+    <p class="error no-shards">
+      The number of shards is not set.
+    </p>
+    <p class="error zero-replicas">
+      Each table must have at least one replica per shard.
+    </p>
+    <p class="error no-replicas">
+      The number of replicas per shard is not set.
+    </p>
+    <p class="error too-many-shards">
+      A table may not have more shards than there are servers. Currently
+      you have {{num_default_servers}} servers available for this table.
+    </p>
+    <p class="error not-enough-defaults-shard">
+      While you have enough servers for this many shards, not enough of
+      them have the "default" tag.  You can manage server tags through
+      the table "rethinkdb.server_config".
+    </p>
+    <p class="error not-enough-defaults-replica">
+      While you have enough servers for this many replicas, not enough
+      of them have the "default" tag. You can manage server tags through
+      the table "rethinkdb.server_config".
+    </p>
+    <p class="error too-many-replicas">
+      A table may not have more replicas per shard than there are
+      servers. Currently you have {{num_default_servers}} servers
+      available for this table.
+    </p>
+    <p class="error server-error">
+      The server returned the following error:
+      <div class="server-msg">
+        {{server_error}}
+      </div>
+    </p>
+  </div>
+  <a href="#" class="expand-tree">Where's my data going?</a>
+  <div class='reconfigure-diff tree-view'></div>
 </div>
-<a href="#" class="expand-tree">Where's my data going?</a>
-<div class='reconfigure-diff tree-view'></div>

@@ -428,17 +428,14 @@ module 'Modals', ->
 
         expand_link: (event) =>
             event.preventDefault()
+            event.target.blur();
             @model.set(expanded: not @model.get('expanded'))
 
         expanded_changed: =>
-            if not @model.get('expanded')
-                @$('.reconfigure-diff').removeClass('expanded')
-                @$('.expand-tree').removeClass('expanded')
-                $('.reconfigure-modal').removeClass('expanded')
-            else
-                @$('.reconfigure-diff').addClass('expanded')
-                @$('.expand-tree').addClass('expanded')
-                $('.reconfigure-modal').addClass('expanded')
+            @$('.reconfigure-diff').toggleClass('expanded')
+            @$('.expand-tree').toggleClass('expanded')
+            $('.reconfigure-modal').toggleClass('expanded')
+            $('.expandbox').toggleClass('expanded')
 
         render: =>
             super $.extend(@model.toJSON(),
